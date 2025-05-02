@@ -1,11 +1,11 @@
 package com.pm.patient_service.controller;
 
+import com.pm.patient_service.dto.PatientRequestDTO;
 import com.pm.patient_service.dto.PatientResponseDTO;
 import com.pm.patient_service.service.PatientService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,9 +21,15 @@ public class PatientController {
         this.patientService = patientService;
     }
 
-    @GetMapping(value = "/all", produces = "application/json")
+    @GetMapping(produces = "application/json")
     public ResponseEntity<List<PatientResponseDTO>> getPatients() {
         List<PatientResponseDTO> patients = patientService.getAllPatients();
         return ResponseEntity.of(Optional.ofNullable(patients));
+    }
+
+    @PostMapping(value = "/save", consumes = "application/json")
+    public ResponseEntity<PatientResponseDTO> addPatient(@Valid @RequestBody PatientRequestDTO patient) {
+        PatientResponseDTO patientResponseDTO = patientService.addPatient(patient);
+        return ResponseEntity.of(Optional.ofNullable(patientResponseDTO));
     }
 }

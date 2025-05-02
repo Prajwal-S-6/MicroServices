@@ -1,13 +1,16 @@
 package com.pm.patient_service.service;
 
+import com.pm.patient_service.dto.PatientRequestDTO;
 import com.pm.patient_service.dto.PatientResponseDTO;
 import com.pm.patient_service.model.Patient;
 import com.pm.patient_service.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class PatientService {
@@ -20,10 +23,28 @@ public class PatientService {
     }
 
     public List<PatientResponseDTO> getAllPatients() {
-        return patientRepository.findAll().stream().map(PatientService::toDTO).toList();
+        return patientRepository.findAll().stream().map(PatientService::toResponseDTO).toList();
     }
 
-    public static PatientResponseDTO toDTO(Patient patient) {
+    public static PatientResponseDTO toResponseDTO(Patient patient) {
         return new PatientResponseDTO(patient.getFirstName(), patient.getLastName(), patient.getEmail(), patient.getRegisteredDate().toString());
     }
+
+    public PatientResponseDTO addPatient(PatientRequestDTO patientRequestDTO) {
+        Patient patient = patientRepository.save(toModel(patientRequestDTO));
+        return toResponseDTO(patient);
+    }
+
+    public static Patient toModel(PatientRequestDTO patientRequestDTO) {
+        Patient patient = new Patient();
+        patient.setFirstName(patientRequestDTO.firstName());
+        patient.setLastName(patientRequestDTO.lastName());
+        patient.setEmail(patientRequestDTO.email());
+        patient.setDateOfBirth(LocalDate.parse(patientRequestDTO.dateOfBirth()));
+        patient.setRegisteredDate(LocalDate.now());
+
+        return patient;
+    }
+
+
 }
