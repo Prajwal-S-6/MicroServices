@@ -2,6 +2,7 @@ package com.pm.patient_service.controller;
 
 import com.pm.patient_service.dto.PatientRequestDTO;
 import com.pm.patient_service.dto.PatientResponseDTO;
+import com.pm.patient_service.exceptions.EmailAlreadyExistsException;
 import com.pm.patient_service.service.PatientService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
