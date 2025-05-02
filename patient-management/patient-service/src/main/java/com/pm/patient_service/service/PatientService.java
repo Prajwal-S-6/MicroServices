@@ -12,15 +12,18 @@ import java.util.List;
 @Service
 public class PatientService {
 
-    private PatientRepository patientRepository;
+    //constructor-based DI (or can use @Autowired)
+    private final PatientRepository patientRepository;
 
     public PatientService(PatientRepository patientRepository) {
         this.patientRepository = patientRepository;
     }
 
     public List<PatientResponseDTO> getAllPatients() {
-        List<PatientResponseDTO> patientResponse = new ArrayList<>();
-        patientRepository.findAll().forEach(patient -> patientResponse.add(new PatientResponseDTO(patient.getFirstName(), patient.getLastName(), patient.getEmail(), patient.getRegisteredDate())));
-        return patientResponse;
+        return patientRepository.findAll().stream().map(PatientService::toDTO).toList();
+    }
+
+    public static PatientResponseDTO toDTO(Patient patient) {
+        return new PatientResponseDTO(patient.getFirstName(), patient.getLastName(), patient.getEmail(), patient.getRegisteredDate().toString());
     }
 }
