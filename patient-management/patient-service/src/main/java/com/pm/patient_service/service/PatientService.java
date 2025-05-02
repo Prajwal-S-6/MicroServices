@@ -27,7 +27,7 @@ public class PatientService {
     }
 
     public static PatientResponseDTO toResponseDTO(Patient patient) {
-        return new PatientResponseDTO(patient.getFirstName(), patient.getLastName(), patient.getEmail(), patient.getRegisteredDate().toString());
+        return new PatientResponseDTO(patient.getId().toString(),patient.getFirstName(), patient.getLastName(), patient.getEmail(), patient.getAddress(), patient.getRegisteredDate().toString());
     }
 
     public PatientResponseDTO addPatient(PatientRequestDTO patientRequestDTO) {
@@ -40,6 +40,7 @@ public class PatientService {
         patient.setFirstName(patientRequestDTO.firstName());
         patient.setLastName(patientRequestDTO.lastName());
         patient.setEmail(patientRequestDTO.email());
+        patient.setAddress(patientRequestDTO.address());
         patient.setDateOfBirth(LocalDate.parse(patientRequestDTO.dateOfBirth()));
         patient.setRegisteredDate(LocalDate.now());
 
