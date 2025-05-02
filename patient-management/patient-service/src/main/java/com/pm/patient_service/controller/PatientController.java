@@ -2,12 +2,13 @@ package com.pm.patient_service.controller;
 
 import com.pm.patient_service.dto.PatientResponseDTO;
 import com.pm.patient_service.service.PatientService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/patients")               // http::localhost:8080/patients
@@ -20,8 +21,9 @@ public class PatientController {
         this.patientService = patientService;
     }
 
-    @GetMapping(value = "/patients", produces = "application/json")
-    public List<PatientResponseDTO> fetchAllPatients() {
-        return patientService.getAllPatients();
+    @GetMapping(value = "/all", produces = "application/json")
+    public ResponseEntity<List<PatientResponseDTO>> getPatients() {
+        List<PatientResponseDTO> patients = patientService.getAllPatients();
+        return ResponseEntity.of(Optional.ofNullable(patients));
     }
 }
