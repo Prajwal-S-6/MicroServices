@@ -2,10 +2,13 @@ package com.pm.patient_service.controller;
 
 import com.pm.patient_service.dto.PatientRequestDTO;
 import com.pm.patient_service.dto.PatientResponseDTO;
+import com.pm.patient_service.dto.validators.AddPatientValidatorGroup;
 import com.pm.patient_service.exceptions.EmailAlreadyExistsException;
 import com.pm.patient_service.service.PatientService;
 import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +33,7 @@ public class PatientController {
     }
 
     @PostMapping(value = "/save", consumes = "application/json")
-    public ResponseEntity<PatientResponseDTO> addPatient(@Valid @RequestBody PatientRequestDTO patient) {
+    public ResponseEntity<PatientResponseDTO> addPatient(@Validated({Default.class, AddPatientValidatorGroup.class}) @RequestBody PatientRequestDTO patient) {
         PatientResponseDTO patientResponseDTO = patientService.addPatient(patient);
         return ResponseEntity.of(Optional.ofNullable(patientResponseDTO));
     }

@@ -49,7 +49,7 @@ public class PatientService {
         patient.setEmail(patientRequestDTO.email());
         patient.setAddress(patientRequestDTO.address());
         patient.setDateOfBirth(LocalDate.parse(patientRequestDTO.dateOfBirth()));
-        patient.setRegisteredDate(LocalDate.now());
+        patient.setRegisteredDate(LocalDate.parse(patientRequestDTO.registeredDate()));
 
         return patient;
     }
