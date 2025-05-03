@@ -34,4 +34,12 @@ public class RestApiExceptionHandler {
 
         return ResponseEntity.badRequest().body(errors);
     }
+
+    @ExceptionHandler(PatientNotFoundException.class)
+    public ResponseEntity<Map<String, String>> patientNotFound(PatientNotFoundException exception) {
+        Map<String, String> errors = new HashMap<>();
+        LOG.error(exception.getMessage());
+        errors.put("message", "Patient not found");
+        return ResponseEntity.badRequest().body(errors);
+    }
 }

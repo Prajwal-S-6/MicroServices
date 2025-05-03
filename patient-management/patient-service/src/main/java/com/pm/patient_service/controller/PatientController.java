@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/patients")               // http::localhost:8080/patients
@@ -32,5 +33,11 @@ public class PatientController {
     public ResponseEntity<PatientResponseDTO> addPatient(@Valid @RequestBody PatientRequestDTO patient) {
         PatientResponseDTO patientResponseDTO = patientService.addPatient(patient);
         return ResponseEntity.of(Optional.ofNullable(patientResponseDTO));
+    }
+
+    @PutMapping(value = "/update/{id}", consumes = "application/json")
+    public ResponseEntity<PatientResponseDTO> updatePatient(@PathVariable(name = "id") UUID id, @RequestBody @Valid PatientRequestDTO patientRequestDTO) {
+        PatientResponseDTO patientResponseDTO = patientService.updatePatient(id, patientRequestDTO);
+        return ResponseEntity.ok().body(patientResponseDTO);
     }
 }
