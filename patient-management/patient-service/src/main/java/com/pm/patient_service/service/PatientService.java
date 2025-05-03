@@ -71,7 +71,13 @@ public class PatientService {
 
         return toResponseDTO(updatedPatient);
 
+    }
 
+    public void deletePatient(UUID id) {
+        if(!patientRepository.existsById(id)) {
+            throw new PatientNotFoundException("Patient doesnt exist with id: " + id);
+        }
+        patientRepository.deleteById(id);
     }
 
 
