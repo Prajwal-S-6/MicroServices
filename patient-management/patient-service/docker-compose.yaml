@@ -1,0 +1,38 @@
+version: "3.8"
+services:
+  postgres-db:
+    image: postgres:latest
+    container_name: postgres-db
+    volumes:
+      - db_volumes:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: patient-db1
+      POSTGRES_USER: prajwal
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    networks:
+      - internal
+
+  patient-service-1:
+#    image: patient-service:v1
+    build:
+      context: .
+      dockerfile: Dockerfile-PatientService
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - postgres-db
+    networks:
+      - internal
+
+volumes:
+  db_volumes:
+networks:
+  internal:
+    driver: bridge
+
+
+
