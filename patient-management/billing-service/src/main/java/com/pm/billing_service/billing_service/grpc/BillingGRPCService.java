@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import io.grpc.stub.StreamObserver;
 
 @GrpcService
-public class BillingServiceGRPCServer extends BillingServiceGrpc.BillingServiceImplBase {
+public class BillingGRPCService extends BillingServiceGrpc.BillingServiceImplBase {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BillingServiceGRPCServer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BillingGRPCService.class);
 
     @Override
     public void createBillingAccount(BillingRequest request, StreamObserver<BillingResponse> billingResponse) {
