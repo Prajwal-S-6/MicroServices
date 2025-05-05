@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  kafka:
+    image: bitnami/kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"  #port exposed by Kafka for producers and consumers
+      - "9094:9094"  #exposing this port to connect from local and other kafka clients(conduktor)
+    env_file:
+      - .env
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge
+    name: internal
+    external: true
+
+
