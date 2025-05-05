@@ -7,6 +7,8 @@ import com.pm.patient_service.exceptions.PatientNotFoundException;
 import com.pm.patient_service.grpc.BillingServiceGRPCClient;
 import com.pm.patient_service.model.Patient;
 import com.pm.patient_service.repository.PatientRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,6 +18,7 @@ import java.util.UUID;
 @Service
 public class PatientService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(PatientService.class);
     //constructor-based DI (or can use @Autowired)
     private final PatientRepository patientRepository;
 
@@ -51,6 +54,7 @@ public class PatientService {
             throw new EmailAlreadyExistsException("A patient with this email already exists " + patientRequestDTO.email());
         }
         Patient patient = patientRepository.save(toModel(patientRequestDTO));
+        LOG.info("Calling billing service createBillingAccount using gRPC");
         billingServiceGRPCClient.createBillingAccount(patient.getId().toString(), patient.getFirstName(),
                 patient.getLastName(), patient.getEmail());
         return toResponseDTO(patient);
