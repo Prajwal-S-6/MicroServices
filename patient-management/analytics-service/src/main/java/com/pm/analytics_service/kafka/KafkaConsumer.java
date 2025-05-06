@@ -15,6 +15,7 @@ public class KafkaConsumer {
     @KafkaListener(topics = "patient", groupId = "analytics-service")         // saying we are listening/consuming patient topic; groupId is for Kafka broker to know about the consumer
     public void consumePatientMessage(byte[] patientMessage) {
         try {
+            LOG.info("Consuming Kafka Patient message");
             PatientMessage message = PatientMessage.parseFrom(patientMessage);
             LOG.info("Successfully consumed patient message PatientId: {}, FirstName: {}, LastName: {}, Email: {}",
                     message.getPatientId(), message.getFirstName(), message.getLastName(), message.getEmail());
