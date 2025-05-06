@@ -5,6 +5,7 @@ import com.pm.patient_service.dto.PatientResponseDTO;
 import com.pm.patient_service.exceptions.EmailAlreadyExistsException;
 import com.pm.patient_service.exceptions.PatientNotFoundException;
 import com.pm.patient_service.grpc.BillingServiceGRPCClient;
+import com.pm.patient_service.kafka.KafkaProducer;
 import com.pm.patient_service.model.Patient;
 import com.pm.patient_service.repository.PatientRepository;
 import org.slf4j.Logger;
@@ -24,9 +25,12 @@ public class PatientService {
 
     private final BillingServiceGRPCClient billingServiceGRPCClient;
 
-    public PatientService(PatientRepository patientRepository, BillingServiceGRPCClient billingServiceGRPCClient) {
+    private final KafkaProducer kafkaProducer;
+
+    public PatientService(PatientRepository patientRepository, BillingServiceGRPCClient billingServiceGRPCClient, KafkaProducer kafkaProducer) {
         this.patientRepository = patientRepository;
         this.billingServiceGRPCClient = billingServiceGRPCClient;
+        this.kafkaProducer = kafkaProducer;
     }
 
     public static PatientResponseDTO toResponseDTO(Patient patient) {
@@ -57,6 +61,7 @@ public class PatientService {
         LOG.info("Calling billing service createBillingAccount using gRPC");
         billingServiceGRPCClient.createBillingAccount(patient.getId().toString(), patient.getFirstName(),
                 patient.getLastName(), patient.getEmail());
+        kafkaProducer.sendPatientMessage(patient);
         return toResponseDTO(patient);
 
     }
