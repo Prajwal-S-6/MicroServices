@@ -4,3 +4,7 @@ CREATE TABLE IF NOT EXISTS user_details (
     password VARCHAR(255) NOT NULL,
     role VARCHAR(50) NOT NULL
 );
+
+---- Insert the user if no existing user with the same id or email exists
+INSERT INTO user_details(id, email, password, role)
+VALUES(10001, 'test1@test1.com', '$2b$12$7hoRZfJrRKD2nIm2vHLs7OBETy.LWenXXMLKf99W8M4PUwO6KB7fu', 'ADMIN')
