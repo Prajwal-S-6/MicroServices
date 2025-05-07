@@ -1,0 +1,26 @@
+server:
+  port: 8083
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        ## Client -> http://localhost:8083/api/patients/save
+        ## API Gateway -> http://patient-service:8080/patients/save  this will call patientService controller and service and handles the request
+        - id: patient-service-route
+          uri: http://patient-service-patient-service-1-1:8080
+          predicates:
+            - Path=/api/patients/**
+          filters:
+            - StripPrefix=1
+
+        ## Client -> http://localhost:8083/api-docs/patients
+        ## API Gateway -> http://patient-service:8080/v3/api-docs  this will call open-api docs for generating documentation for the patient api
+        - id: api-docs-patient-service
+          uri: http://patient-service-patient-service-1-1:8080
+          predicates:
+            - Path=/api-docs/patients
+          filter:
+            - RewritePath=/api-docs/patients,/v3/api-docs
+
+
