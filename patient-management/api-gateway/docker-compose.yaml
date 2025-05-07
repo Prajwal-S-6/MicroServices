@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile-APIGateway
+    container_name: api-gateway
+    ports:
+      - "8083:8083"
+    networks:
+      - internal
+
+
+networks:
+  internal:
+    driver: bridge
+    name: internal
+    external: true
+
