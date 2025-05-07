@@ -20,6 +20,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-AuthService
+    container_name: auth-service
     ports:
       - "8085:8085"
     env_file:
