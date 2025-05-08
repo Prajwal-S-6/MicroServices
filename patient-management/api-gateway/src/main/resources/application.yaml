@@ -23,4 +23,13 @@ spring:
           filters:
             - RewritePath=/api-docs/patients,/v3/api-docs
 
+        ## Client -> http://localhost:8083/api/user/login
+        ## API Gateway -> http://auth-service:8085/user/login  this will call auth-service controller and service to handle the request
+        - id: auth-service-route
+          uri: http://auth-service:8085
+          predicates:
+            - Path=/api/user/*
+          filters:
+            - StripPrefix=1
+
 

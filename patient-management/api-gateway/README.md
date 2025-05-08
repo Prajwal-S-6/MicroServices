@@ -8,4 +8,12 @@
 ![img.png](img.png)
 
 
+Routed Auth request(/login and /validate via API Gateway)
+![img_2.png](img_2.png)
+
+![img_3.png](img_3.png)
+
+![img_4.png](img_4.png)
+
+
 

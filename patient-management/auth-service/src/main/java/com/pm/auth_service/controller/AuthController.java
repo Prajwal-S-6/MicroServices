@@ -38,6 +38,9 @@ public class AuthController {
 
 
     @GetMapping(value = "/validate")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "UnAuthorized")})
     public ResponseEntity<Void> validateToken(@RequestHeader("Authorization") String authHeader) {
         // In the header--------- Authorization: Bearer <token>
         if(authHeader == null || !authHeader.startsWith("Bearer")) {
