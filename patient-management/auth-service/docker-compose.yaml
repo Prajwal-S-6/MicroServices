@@ -21,8 +21,9 @@ services:
       context: .
       dockerfile: Dockerfile-AuthService
     container_name: auth-service
-    ports:
-      - "8085:8085"
+    ## As requests are handled via api-gateway
+#    ports:
+#      - "8085:8085"
     env_file:
       - .env
     depends_on:
