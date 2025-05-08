@@ -19,7 +19,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-PatientService
-    ## not exposing this port outside as we are using api-gateway to route request to patient-service
+    ## As requests are handled via api; so not exposing this port outside
 #    ports:
 #      - "8080:8080"
     env_file:
