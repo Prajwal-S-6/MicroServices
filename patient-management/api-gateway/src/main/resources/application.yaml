@@ -14,6 +14,15 @@ spring:
           filters:
             - StripPrefix=1
 
+        ## Client -> http://localhost:8083/api-docs/auth
+        ## API Gateway -> http://patient-service:8085/v3/api-docs  this will call open-api docs for generating documentation for the patient api
+        - id: api-docs-auth-service
+          uri: http://auth-service:8085
+          predicates:
+            - Path=/api-docs/auth
+          filters:
+            - RewritePath=/api-docs/auth,/v3/api-docs
+
 
         ## Client -> http://localhost:8083/api/patients/save
         ## API Gateway -> http://patient-service:8080/patients/save  this will call patientService controller and service and handles the request
@@ -23,6 +32,8 @@ spring:
             - Path=/api/patients/**
           filters:
             - StripPrefix=1
+            ## This has to match the custom filter class name suffixed with GatewayFilterFactory(JWTValidationGatewayFilterFactory)
+            - JWTValidation
 
 
         ## Client -> http://localhost:8083/api-docs/patients
