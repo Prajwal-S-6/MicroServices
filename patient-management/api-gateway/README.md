@@ -23,4 +23,7 @@ With Auth token handled via JWTValidationGatewayFilterFactory
 ![img_6.png](img_6.png)
 
 
+Auth Service API Docs via api-gateway
+![img_7.png](img_7.png)
+
 
