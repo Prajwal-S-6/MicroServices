@@ -19,7 +19,7 @@ public class AuthIntegrationTest {
     public void shouldReturnOKWithValidToken() {
         String payLoad = """
                 {
-                    "email": "test@test.com",
+                    "email": "test1@test1.com",
                     "password": "password123"
                 }
                 """;
@@ -27,7 +27,7 @@ public class AuthIntegrationTest {
                 .contentType("application/json")
                 .body(payLoad)
                 .when()
-                .post("/user/login")
+                .post("api/user/login")
                 .then()
                 .statusCode(200)
                 .body("token", notNullValue())
