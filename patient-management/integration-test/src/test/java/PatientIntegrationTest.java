@@ -1,3 +1,4 @@
+import groovyjarjarantlr4.v4.codegen.model.SrcOp;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeAll;
@@ -39,5 +40,15 @@ public class PatientIntegrationTest {
                     .then()
                     .statusCode(200)
                     .body("patients", notNullValue());
+    }
+
+    @Test
+    public void shouldReturnUnauthorizedOnInvalidToken() {
+        String token = "some-random-token";
+        given()
+                .header("Authorization", "Bearer "+token)
+                .when().get("api/patients")
+                .then()
+                .statusCode(401);
     }
 }
