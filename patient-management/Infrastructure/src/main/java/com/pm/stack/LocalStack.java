@@ -2,16 +2,25 @@ package com.pm.stack;
 
 
 
+import com.amazonaws.services.rds.model.DBInstance;
 import software.amazon.awscdk.*;
+import software.amazon.awscdk.services.ec2.InstanceClass;
+import software.amazon.awscdk.services.ec2.InstanceSize;
+import software.amazon.awscdk.services.ec2.InstanceType;
 import software.amazon.awscdk.services.ec2.Vpc;
+import software.amazon.awscdk.services.rds.*;
 
 public class LocalStack extends Stack {
 
     private final Vpc vpc;
+
     public LocalStack(final App scope, final String id, final StackProps props) {
         super(scope, id, props);
 
         this.vpc = createVpc();
+
+        DatabaseInstance authServiceDb = createMySQLDatabase("AuthServiceDB", "auth-service-db");
+        DatabaseInstance patientServiceDb = createPostgresDatabase("PatientServiceDB", "patient-service-db");
     }
 
     private Vpc createVpc() {
@@ -20,6 +29,34 @@ public class LocalStack extends Stack {
                 .maxAzs(2)
                 .build();
 
+    }
+
+    private DatabaseInstance createPostgresDatabase(String id, String dbName) {
+        return DatabaseInstance.Builder.create(this, id)
+                .engine(DatabaseInstanceEngine.postgres(PostgresInstanceEngineProps.builder()
+                                .version(PostgresEngineVersion.VER_17_2)
+                                .build()))
+                .vpc(vpc)
+                .instanceType(InstanceType.of(InstanceClass.BURSTABLE2, InstanceSize.MICRO))
+                .allocatedStorage(20)
+                .credentials(Credentials.fromGeneratedSecret("admin"))
+                .databaseName(dbName)
+                .removalPolicy(RemovalPolicy.DESTROY)
+                .build();
+    }
+
+    private DatabaseInstance createMySQLDatabase(String id, String dbName) {
+        return DatabaseInstance.Builder.create(this, id)
+                .engine(DatabaseInstanceEngine.mysql(MySqlInstanceEngineProps.builder()
+                        .version(MysqlEngineVersion.VER_8_4_3)
+                        .build()))
+                .vpc(vpc)
+                .instanceType(InstanceType.of(InstanceClass.BURSTABLE2, InstanceSize.MICRO))
+                .allocatedStorage(20)
+                .credentials(Credentials.fromGeneratedSecret("admin"))
+                .databaseName(dbName)
+                .removalPolicy(RemovalPolicy.DESTROY)
+                .build();
     }
 
     public static void main(String[] args) {
