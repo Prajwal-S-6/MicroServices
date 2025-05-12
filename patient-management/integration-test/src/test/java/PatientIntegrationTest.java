@@ -18,7 +18,7 @@ public class PatientIntegrationTest {
         String payLoad = """
                 {
                     "email": "test1@test1.com",
-                    "password": "password12"
+                    "password": "password123"
                 }
                 """;
 
