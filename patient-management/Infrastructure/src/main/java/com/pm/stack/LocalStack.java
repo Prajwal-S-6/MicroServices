@@ -56,7 +56,13 @@ public class LocalStack extends Stack {
                 null,
                 null);
 
+        FargateService analyticsService = createFargateService("AnalyticsService",
+                "analytics-service-analytics-service:latest",
+                List.of(8082),
+                null,
+                null);
 
+        analyticsService.getNode().addDependency(mskCluster);
     }
 
     private Vpc createVpc() {
