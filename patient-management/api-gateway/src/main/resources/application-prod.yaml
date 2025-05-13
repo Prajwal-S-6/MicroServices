@@ -1,0 +1,48 @@
+server:
+  port: 8083
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        ## Client -> http://localhost:8083/api/user/login
+        ## API Gateway -> http://auth-service:8085/user/login  this will call auth-service controller and service to handle the request
+        - id: auth-service-route
+          uri: http://host.docker.internal:8085
+          predicates:
+            - Path=/api/user/*
+          filters:
+            - StripPrefix=1
+
+        ## Client -> http://localhost:8083/api-docs/auth
+        ## API Gateway -> http://patient-service:8085/v3/api-docs  this will call open-api docs for generating documentation for the patient api
+        - id: api-docs-auth-service
+          uri: http://host.docker.internal:8085
+          predicates:
+            - Path=/api-docs/auth
+          filters:
+            - RewritePath=/api-docs/auth,/v3/api-docs
+
+
+        ## Client -> http://localhost:8083/api/patients/save
+        ## API Gateway -> http://patient-service:8080/patients/save  this will call patientService controller and service and handles the request
+        - id: patient-service-route
+          uri: http://host.docker.internal:8080
+          predicates:
+            - Path=/api/patients/**
+          filters:
+            - StripPrefix=1
+            ## This has to match the custom filter class name suffixed with GatewayFilterFactory(JWTValidationGatewayFilterFactory)
+            - JWTValidation
+
+
+        ## Client -> http://localhost:8083/api-docs/patients
+        ## API Gateway -> http://patient-service:8080/v3/api-docs  this will call open-api docs for generating documentation for the patient api
+        - id: api-docs-patient-service
+          uri: http://host.docker.internal:8080
+          predicates:
+            - Path=/api-docs/patients
+          filters:
+            - RewritePath=/api-docs/patients,/v3/api-docs
+
+
