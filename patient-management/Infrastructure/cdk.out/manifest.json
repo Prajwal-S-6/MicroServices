@@ -180,6 +180,12 @@
             "data": "AuthServiceDBC6B688BA"
           }
         ],
+        "/localstack/AuthServiceDBHealthCheck": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuthServiceDBHealthCheck"
+          }
+        ],
         "/localstack/PatientServiceDB/SubnetGroup/Default": [
           {
             "type": "aws:cdk:logicalId",
@@ -208,6 +214,30 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "PatientServiceDBB84F9BF9"
+          }
+        ],
+        "/localstack/PatientServiceDBHealthCheck": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PatientServiceDBHealthCheck"
+          }
+        ],
+        "/localstack/MSKCluster": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MSKCluster"
+          }
+        ],
+        "/localstack/patient-management-cluster/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "patientmanagementcluster4ABFF1ED"
+          }
+        ],
+        "/localstack/patient-management-cluster/DefaultServiceDiscoveryNamespace/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "patientmanagementclusterDefaultServiceDiscoveryNamespaceD06079D4"
           }
         ]
       },
