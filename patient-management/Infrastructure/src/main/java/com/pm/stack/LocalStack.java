@@ -2,13 +2,20 @@ package com.pm.stack;
 
 
 
-import com.amazonaws.services.rds.model.DBInstance;
 import software.amazon.awscdk.*;
-import software.amazon.awscdk.services.ec2.InstanceClass;
-import software.amazon.awscdk.services.ec2.InstanceSize;
+import software.amazon.awscdk.Stack;
+import software.amazon.awscdk.services.ec2.*;
 import software.amazon.awscdk.services.ec2.InstanceType;
-import software.amazon.awscdk.services.ec2.Vpc;
+import software.amazon.awscdk.services.ecs.*;
+import software.amazon.awscdk.services.ecs.Protocol;
+import software.amazon.awscdk.services.logs.LogGroup;
+import software.amazon.awscdk.services.logs.RetentionDays;
+import software.amazon.awscdk.services.msk.CfnCluster;
 import software.amazon.awscdk.services.rds.*;
+import software.amazon.awscdk.services.route53.CfnHealthCheck;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class LocalStack extends Stack {
 
@@ -19,6 +26,7 @@ public class LocalStack extends Stack {
     public LocalStack(final App scope, final String id, final StackProps props) {
         super(scope, id, props);
 
+        // creating VPC
         this.vpc = createVpc();
 
         // creating DB using AWS RDS
@@ -56,7 +64,6 @@ public class LocalStack extends Stack {
                 .vpcName("PatientManagementVPC")
                 .maxAzs(2)
                 .build();
-
     }
 
     private DatabaseInstance createPostgresDatabase(String id, String dbName) {
@@ -121,6 +128,59 @@ public class LocalStack extends Stack {
                 .build();
     }
 
+    private FargateService createFargateService(String id, String imageName, List<Integer> ports, DatabaseInstance db, Map<String, String> envVariables) {
+        FargateTaskDefinition fargateTaskDefinition = FargateTaskDefinition.Builder.create(this, id + "Task")
+                .cpu(256)
+                .memoryLimitMiB(512)
+                .build();
+
+        ContainerDefinitionOptions.Builder containerDefinitionOptions = ContainerDefinitionOptions.builder()
+                .image(ContainerImage.fromRegistry(imageName))
+                .portMappings(ports.stream().map(port -> PortMapping.builder()
+                        .containerPort(port)
+                        .hostPort(port)
+                        .protocol(Protocol.TCP)
+                        .build()).toList())
+                .logging(LogDriver.awsLogs(AwsLogDriverProps.builder()
+                                .logGroup(LogGroup.Builder.create(this, id + "LogGroup")
+                                        .logGroupName("/ecs/" + imageName)
+                                        .removalPolicy(RemovalPolicy.DESTROY)
+                                        .retention(RetentionDays.ONE_DAY)
+                                        .build())
+                        .build()));
+
+        Map<String, String> envVars = new HashMap<>();
+        envVars.put("SPRING_KAFKA_BOOTSTRAP_SERVERS", "localhost.localstack.cloud:4510, localhost.localstack.cloud:4511, localhost.localstack.cloud:4512");
+
+        if(envVariables != null) {
+            envVars.putAll(envVariables);
+        }
+
+        if(db != null) {
+            if("mysql".equals(db.getEngine().getEngineType())) {
+                envVars.put("SPRING_DATASOURCE_URL", "jdbc:mysql://%s:%s/%s-db".formatted(db.getDbInstanceEndpointAddress(), db.getDbInstanceEndpointPort(), imageName));
+            } else if ("postgres".equals(db.getEngine().getEngineType())) {
+                envVars.put("SPRING_DATASOURCE_URL", "jdbc:postgresql://%s:%s/%s-db".formatted(db.getDbInstanceEndpointAddress(), db.getDbInstanceEndpointPort(), imageName));
+            }
+
+            envVars.put("SPRING_DATASOURCE_USERNAME", "admin");
+            envVars.put("SPRING_DATASOURCE_PASSWORD", db.getSecret().secretValueFromJson("password").toString());
+            envVars.put("SPRING_JPA_HIBERNATE_DDL_AUTO", "update");
+            envVars.put("SPRING_SQL_INIT_MODE", "always");
+            envVars.put("SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT", "60000");
+        }
+
+        containerDefinitionOptions.environment(envVars);
+
+        fargateTaskDefinition.addContainer(imageName + "Container", containerDefinitionOptions.build());
+
+        return FargateService.Builder.create(this, id)
+                .cluster(ecsCluster)
+                .taskDefinition(fargateTaskDefinition)
+                .assignPublicIp(false)
+                .serviceName(imageName)
+                .build();
+    }
 
     public static void main(String[] args) {
         App app = new App(AppProps.builder().outdir("./cdk.out").build());
