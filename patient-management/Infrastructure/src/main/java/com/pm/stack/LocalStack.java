@@ -14,6 +14,8 @@ public class LocalStack extends Stack {
 
     private final Vpc vpc;
 
+    private final Cluster ecsCluster;
+
     public LocalStack(final App scope, final String id, final StackProps props) {
         super(scope, id, props);
 
@@ -84,6 +86,7 @@ public class LocalStack extends Stack {
                 .removalPolicy(RemovalPolicy.DESTROY)
                 .build();
     }
+
     private CfnHealthCheck createDBHealthCheck(DatabaseInstance dbInstance, String id) {
         return CfnHealthCheck.Builder.create(this, id)
                 .healthCheckConfig(CfnHealthCheck.HealthCheckConfigProperty.builder()
@@ -107,6 +110,14 @@ public class LocalStack extends Stack {
                                 .collect(Collectors.toList()))
                         .brokerAzDistribution("DEFAULT")
                         .build())
+                .build();
+    }
+
+    private Cluster createECSCluster() {
+        return Cluster.Builder.create(this, "patient-management-cluster")
+                .vpc(this.vpc)
+                .defaultCloudMapNamespace(CloudMapNamespaceOptions.builder()
+                        .name("patient-management.localstack").build())
                 .build();
     }
 
