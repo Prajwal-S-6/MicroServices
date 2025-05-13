@@ -660,7 +660,7 @@
     },
     "ClusterName": "kafka-cluster",
     "KafkaVersion": "2.8.0",
-    "NumberOfBrokerNodes": 1
+    "NumberOfBrokerNodes": 2
    }
   },
   "patientmanagementcluster4ABFF1ED": {
@@ -726,7 +726,7 @@
              "Endpoint.Port"
             ]
            },
-           "/auth-service-auth-service:latest-db"
+           "/auth-service-db"
           ]
          ]
         }
@@ -777,7 +777,7 @@
         }
        }
       },
-      "Name": "auth-service-auth-service:latestContainer",
+      "Name": "AuthServiceContainer",
       "PortMappings": [
        {
         "ContainerPort": 8085,
@@ -983,7 +983,7 @@
         }
        }
       },
-      "Name": "billing-service-billing-service:latestContainer",
+      "Name": "BillingServiceContainer",
       "PortMappings": [
        {
         "ContainerPort": 8081,
@@ -1182,7 +1182,7 @@
         }
        }
       },
-      "Name": "analytics-service-analytics-service:latestContainer",
+      "Name": "AnalyticsServiceContainer",
       "PortMappings": [
        {
         "ContainerPort": 8082,
@@ -1387,7 +1387,7 @@
              "Endpoint.Port"
             ]
            },
-           "/patient-service-patient-service-1:latest-db"
+           "/patient-service-db"
           ]
          ]
         }
@@ -1442,7 +1442,7 @@
         }
        }
       },
-      "Name": "patient-service-patient-service-1:latestContainer",
+      "Name": "PatientServiceContainer",
       "PortMappings": [
        {
         "ContainerPort": 8080,

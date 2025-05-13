@@ -1130,7 +1130,7 @@
                 },
                 "clusterName": "kafka-cluster",
                 "kafkaVersion": "2.8.0",
-                "numberOfBrokerNodes": 1
+                "numberOfBrokerNodes": 2
               }
             },
             "constructInfo": {
@@ -1248,7 +1248,7 @@
                       {
                         "essential": true,
                         "image": "auth-service-auth-service:latest",
-                        "name": "auth-service-auth-service:latestContainer",
+                        "name": "AuthServiceContainer",
                         "portMappings": [
                           {
                             "containerPort": 8085,
@@ -1297,7 +1297,7 @@
                                       "Endpoint.Port"
                                     ]
                                   },
-                                  "/auth-service-auth-service:latest-db"
+                                  "/auth-service-db"
                                 ]
                               ]
                             }
@@ -1362,9 +1362,9 @@
                   "version": "2.178.1"
                 }
               },
-              "auth-service-auth-service:latestContainer": {
-                "id": "auth-service-auth-service:latestContainer",
-                "path": "localstack/AuthServiceTask/auth-service-auth-service:latestContainer",
+              "AuthServiceContainer": {
+                "id": "AuthServiceContainer",
+                "path": "localstack/AuthServiceTask/AuthServiceContainer",
                 "constructInfo": {
                   "fqn": "aws-cdk-lib.aws_ecs.ContainerDefinition",
                   "version": "2.178.1"
@@ -1653,7 +1653,7 @@
                       {
                         "essential": true,
                         "image": "billing-service-billing-service:latest",
-                        "name": "billing-service-billing-service:latestContainer",
+                        "name": "BillingServiceContainer",
                         "portMappings": [
                           {
                             "containerPort": 8081,
@@ -1712,9 +1712,9 @@
                   "version": "2.178.1"
                 }
               },
-              "billing-service-billing-service:latestContainer": {
-                "id": "billing-service-billing-service:latestContainer",
-                "path": "localstack/BillingServiceTask/billing-service-billing-service:latestContainer",
+              "BillingServiceContainer": {
+                "id": "BillingServiceContainer",
+                "path": "localstack/BillingServiceTask/BillingServiceContainer",
                 "constructInfo": {
                   "fqn": "aws-cdk-lib.aws_ecs.ContainerDefinition",
                   "version": "2.178.1"
@@ -2003,7 +2003,7 @@
                       {
                         "essential": true,
                         "image": "analytics-service-analytics-service:latest",
-                        "name": "analytics-service-analytics-service:latestContainer",
+                        "name": "AnalyticsServiceContainer",
                         "portMappings": [
                           {
                             "containerPort": 8082,
@@ -2057,9 +2057,9 @@
                   "version": "2.178.1"
                 }
               },
-              "analytics-service-analytics-service:latestContainer": {
-                "id": "analytics-service-analytics-service:latestContainer",
-                "path": "localstack/AnalyticsServiceTask/analytics-service-analytics-service:latestContainer",
+              "AnalyticsServiceContainer": {
+                "id": "AnalyticsServiceContainer",
+                "path": "localstack/AnalyticsServiceTask/AnalyticsServiceContainer",
                 "constructInfo": {
                   "fqn": "aws-cdk-lib.aws_ecs.ContainerDefinition",
                   "version": "2.178.1"
@@ -2348,7 +2348,7 @@
                       {
                         "essential": true,
                         "image": "patient-service-patient-service-1:latest",
-                        "name": "patient-service-patient-service-1:latestContainer",
+                        "name": "PatientServiceContainer",
                         "portMappings": [
                           {
                             "containerPort": 8080,
@@ -2397,7 +2397,7 @@
                                       "Endpoint.Port"
                                     ]
                                   },
-                                  "/patient-service-patient-service-1:latest-db"
+                                  "/patient-service-db"
                                 ]
                               ]
                             }
@@ -2466,9 +2466,9 @@
                   "version": "2.178.1"
                 }
               },
-              "patient-service-patient-service-1:latestContainer": {
-                "id": "patient-service-patient-service-1:latestContainer",
-                "path": "localstack/PatientServiceTask/patient-service-patient-service-1:latestContainer",
+              "PatientServiceContainer": {
+                "id": "PatientServiceContainer",
+                "path": "localstack/PatientServiceTask/PatientServiceContainer",
                 "constructInfo": {
                   "fqn": "aws-cdk-lib.aws_ecs.ContainerDefinition",
                   "version": "2.178.1"

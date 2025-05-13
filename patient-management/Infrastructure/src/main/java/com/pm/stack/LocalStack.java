@@ -46,7 +46,8 @@ public class LocalStack extends Stack {
                 "auth-service-auth-service:latest",
                 List.of(8085),
                 authServiceDb,
-                Map.of("JWT_SECRET", "wHdu3kUe8z1+aG/ZVY/JhEtfFZ1Zx4mWJysJ3xIepQo="));
+                Map.of("JWT_SECRET", "wHdu3kUe8z1+aG/ZVY/JhEtfFZ1Zx4mWJysJ3xIepQo="),
+                "auth-service-db");
 
         authService.getNode().addDependency(authServiceDb);
         authService.getNode().addDependency(authServiceDBHealthCheck);
@@ -55,13 +56,15 @@ public class LocalStack extends Stack {
                 "billing-service-billing-service:latest",
                 List.of(8081, 9001),
                 null,
-                null);
+                null,
+                "");
 
         FargateService analyticsService = createFargateService("AnalyticsService",
                 "analytics-service-analytics-service:latest",
                 List.of(8082),
                 null,
-                null);
+                null,
+                "");
 
         analyticsService.getNode().addDependency(mskCluster);
 
@@ -70,7 +73,8 @@ public class LocalStack extends Stack {
                 List.of(8080),
                 patientServiceDb,
                 Map.of("BILLING_SERVICE_ADDRESS", "host.docker.internal",
-                        "BILLING_SERVICE_GRPC_PORT", "9001"));
+                        "BILLING_SERVICE_GRPC_PORT", "9001"),
+                "patient-service-db");
 
         patientService.getNode().addDependency(patientServiceDb);
         patientService.getNode().addDependency(patientServiceDbHealthCheck);
@@ -131,7 +135,7 @@ public class LocalStack extends Stack {
         return CfnCluster.Builder.create(this, "MSKCluster")
                 .clusterName("kafka-cluster")
                 .kafkaVersion("2.8.0")
-                .numberOfBrokerNodes(1)
+                .numberOfBrokerNodes(2)
                 .brokerNodeGroupInfo(CfnCluster.BrokerNodeGroupInfoProperty.builder()
                         .instanceType("kafka.m5.xlarge")
                         .clientSubnets(vpc.getPrivateSubnets().stream().map(ISubnet::getSubnetId)
@@ -149,7 +153,7 @@ public class LocalStack extends Stack {
                 .build();
     }
 
-    private FargateService createFargateService(String id, String imageName, List<Integer> ports, DatabaseInstance db, Map<String, String> envVariables) {
+    private FargateService createFargateService(String id, String imageName, List<Integer> ports, DatabaseInstance db, Map<String, String> envVariables, String dbName) {
         FargateTaskDefinition fargateTaskDefinition = FargateTaskDefinition.Builder.create(this, id + "Task")
                 .cpu(256)
                 .memoryLimitMiB(512)
@@ -180,9 +184,9 @@ public class LocalStack extends Stack {
 
         if(db != null) {
             if("mysql".equals(db.getEngine().getEngineType())) {
-                envVars.put("SPRING_DATASOURCE_URL", "jdbc:mysql://%s:%s/%s-db".formatted(db.getDbInstanceEndpointAddress(), db.getDbInstanceEndpointPort(), imageName));
+                envVars.put("SPRING_DATASOURCE_URL", "jdbc:mysql://%s:%s/%s".formatted(db.getDbInstanceEndpointAddress(), db.getDbInstanceEndpointPort(), dbName));
             } else if ("postgres".equals(db.getEngine().getEngineType())) {
-                envVars.put("SPRING_DATASOURCE_URL", "jdbc:postgresql://%s:%s/%s-db".formatted(db.getDbInstanceEndpointAddress(), db.getDbInstanceEndpointPort(), imageName));
+                envVars.put("SPRING_DATASOURCE_URL", "jdbc:postgresql://%s:%s/%s".formatted(db.getDbInstanceEndpointAddress(), db.getDbInstanceEndpointPort(), dbName));
             }
 
             envVars.put("SPRING_DATASOURCE_USERNAME", "admin");
@@ -194,7 +198,7 @@ public class LocalStack extends Stack {
 
         containerDefinitionOptions.environment(envVars);
 
-        fargateTaskDefinition.addContainer(imageName + "Container", containerDefinitionOptions.build());
+        fargateTaskDefinition.addContainer(id + "Container", containerDefinitionOptions.build());
 
         return FargateService.Builder.create(this, id)
                 .cluster(ecsCluster)
